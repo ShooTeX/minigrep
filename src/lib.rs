@@ -16,7 +16,8 @@ impl Config {
         let file_path;
         let mut ignore_case = env::var("IGNORE_CASE").is_ok();
 
-        if args[1].contains("-i") {
+        // ugly implementation, but there are crates that already implement this behavior
+        if args[1] == "-i" {
             if args.len() < 4 {
                 return Err("not enough arguments");
             }
