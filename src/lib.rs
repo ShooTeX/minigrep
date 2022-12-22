@@ -1,41 +1,21 @@
-use std::{env, error::Error, fs};
+use std::{error::Error, fs};
 
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
 pub struct Config {
-    pub file_path: String,
-    pub query: String,
+    /// If query should be case insensitive
+    #[arg(short, long, default_value_t = false)]
     pub ignore_case: bool,
-}
 
-impl Config {
-    pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
+    /// The query that should be searched in the file
+    #[arg(index(1))]
+    pub query: String,
 
-        let query;
-        let file_path;
-        let mut ignore_case = env::var("IGNORE_CASE").is_ok();
-
-        // ugly implementation, but there are crates that already implement this behavior
-        if args[1] == "-i" {
-            if args.len() < 4 {
-                return Err("not enough arguments");
-            }
-            query = args[2].clone();
-            file_path = args[3].clone();
-
-            ignore_case = true;
-        } else {
-            query = args[1].clone();
-            file_path = args[2].clone();
-        }
-
-        Ok(Config {
-            query,
-            file_path,
-            ignore_case,
-        })
-    }
+    /// The path to the file that should be searched
+    #[arg(index(2))]
+    pub file_path: String,
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
